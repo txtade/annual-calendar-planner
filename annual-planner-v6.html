@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annual Planner</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #fff; }
+    
+    @media print {
+      @page { size: landscape; margin: 0.25in; }
+      body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .no-print { display: none !important; }
+      .print-page { page-break-after: always; }
+      .print-page:last-child { page-break-after: avoid; }
+      .zoom-container { transform: scale(1) !important; }
+    }
+
+    .toolbar {
+      position: sticky; top: 0; z-index: 50;
+      background: #292524; color: white;
+      padding: 10px 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .toolbar-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .year-btn { width: 28px; height: 28px; background: #44403c; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 14px; }
+    .year-btn:hover { background: #57534e; }
+    .year-text { font-size: 20px; font-weight: bold; width: 56px; text-align: center; }
+    .divider { height: 24px; width: 1px; background: #57534e; }
+    .cat-btn { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; border: none; cursor: pointer; color: white; }
+    .cat-btn.selected { outline: 2px solid white; outline-offset: 2px; }
+    .cat-btn:not(.selected) { opacity: 0.6; }
+    .action-btn { padding: 4px 10px; background: #44403c; border: none; border-radius: 4px; color: white; font-size: 12px; cursor: pointer; }
+    .export-btn { padding: 4px 12px; background: #22c55e; border: none; border-radius: 4px; color: white; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .print-btn { padding: 4px 12px; background: white; border: none; border-radius: 4px; color: #292524; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .hint { color: #a8a29e; font-size: 11px; margin-top: 4px; display: flex; justify-content: space-between; }
+    .save-indicator { font-size: 11px; }
+    .save-indicator.saved { color: #22c55e; }
+    
+    .container { padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .title { font-size: 24px; font-weight: bold; color: #292524; }
+    .legend { display: flex; justify-content: center; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #57534e; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+    
+    .grid { border: 1px solid #e7e5e4; border-radius: 8px; overflow: hidden; }
+    .grid-header { display: flex; background: #f5f5f4; border-bottom: 1px solid #e7e5e4; }
+    .grid-header-spacer { width: 50px; flex-shrink: 0; border-right: 1px solid #e7e5e4; }
+    .dow-header { width: 26px; flex-shrink: 0; text-align: center; font-size: 10px; font-weight: 600; color: #78716c; padding: 6px 0; border-right: 1px solid #e7e5e4; }
+    .dow-header.weekend { background: #fef3e2; color: #9a3412; }
+    
+    .month-row { display: flex; border-bottom: 1px solid #e7e5e4; }
+    .month-label { width: 50px; flex-shrink: 0; padding: 8px 6px; background: #f5f5f4; font-weight: 700; font-size: 13px; color: #292524; border-right: 1px solid #e7e5e4; display: flex; align-items: center; }
+    .days-container { flex: 1; position: relative; }
+    .days-row { display: flex; border-bottom: 1px solid #f5f5f4; }
+    .day-cell { width: 26px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; border-right: 1px solid #f5f5f4; user-select: none; cursor: pointer; position: relative; color: #44403c; }
+    .day-cell.empty { background: #fafaf9; cursor: default; }
+    .day-cell.weekend { background: #fff7ed; }
+    .day-cell.today { background: #3b82f6; color: white; font-weight: 700; }
+    .day-cell.holiday { background: #fef2f2; }
+    .day-cell.drag-selected { background: #bfdbfe !important; }
+    .holiday-dot { position: absolute; bottom: 2px; right: 2px; width: 4px; height: 4px; border-radius: 50%; background: #ef4444; }
+    
+    .tracks-container { min-height: 20px; }
+    .track { display: flex; height: 20px; position: relative; }
+    .track-cell { width: 26px; height: 20px; flex-shrink: 0; border-right: 1px solid #fafaf9; }
+    .event-bar { position: absolute; height: 16px; top: 2px; border-radius: 3px; cursor: pointer; display: flex; align-items: center; padding: 0 4px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .event-bar:hover { filter: brightness(1.1); }
+    .event-bar.has-notes { border-left: 3px solid rgba(255,255,255,0.5); }
+    .event-text { font-size: 9px; color: white; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal.hidden { display: none; }
+    .modal-content { background: white; border-radius: 8px; padding: 20px; width: 420px; max-height: 90vh; overflow: auto; }
+    .modal-title { font-weight: 600; font-size: 18px; margin-bottom: 16px; }
+    .form-group { margin-bottom: 12px; }
+    .form-label { font-size: 13px; color: #57534e; display: block; margin-bottom: 4px; }
+    .form-input, .form-select, .form-textarea { width: 100%; border: 1px solid #d6d3d1; border-radius: 4px; padding: 8px 12px; font-size: 14px; }
+    .form-textarea { resize: vertical; min-height: 60px; }
+    .form-row { display: flex; gap: 8px; }
+    .form-row > * { flex: 1; }
+    .cat-selector { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .cat-selector .cat-btn.selected { outline: 2px solid #292524; }
+    .color-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 8px; }
+    .color-swatch { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
+    .color-swatch.selected { border-color: #292524; }
+    .modal-actions { display: flex; justify-content: space-between; margin-top: 20px; }
+    .modal-actions-left, .modal-actions-right { display: flex; gap: 8px; }
+    .delete-btn { padding: 8px 16px; background: none; border: none; color: #dc2626; cursor: pointer; }
+    .duplicate-btn, .cancel-btn { padding: 8px 16px; background: #f5f5f4; border: none; border-radius: 4px; cursor: pointer; }
+    .save-btn { padding: 8px 16px; background: #292524; border: none; border-radius: 4px; color: white; cursor: pointer; }
+    .cat-manager-item { display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #fafaf9; margin-bottom: 8px; border-radius: 4px; }
+    .cat-manager-item-left { display: flex; align-items: center; gap: 8px; }
+    .cat-manager-item button { background: none; border: none; color: #a8a29e; cursor: pointer; font-size: 18px; }
+    .add-cat-row { border-top: 1px solid #e7e5e4; padding-top: 16px; margin-top: 8px; }
+    .print-toggle { display: flex; background: #44403c; border-radius: 4px; padding: 2px; }
+    .print-toggle-btn { padding: 3px 8px; background: transparent; border: none; border-radius: 3px; color: white; font-size: 11px; cursor: pointer; }
+    .print-toggle-btn.active { background: #78716c; }
+    .checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #a8a29e; cursor: pointer; }
+    .more-select { padding: 3px 6px; font-size: 11px; border-radius: 4px; background: #44403c; color: white; border: none; }
+    .zoom-container { transform-origin: top left; }
+    .zoom-controls { display: flex; align-items: center; gap: 6px; }
+    .zoom-btn { width: 24px; height: 24px; background: #44403c; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 14px; font-weight: bold; }
+    .zoom-label { font-size: 11px; color: #a8a29e; min-width: 36px; text-align: center; }
+    input[type="file"] { display: none; }
+    
+    .grid.wide .dow-header { width: 70px; font-size: 12px; }
+    .grid.wide .day-cell { width: 70px; height: 36px; font-size: 13px; flex-direction: column; }
+    .grid.wide .holiday-name { font-size: 7px; color: #dc2626; font-weight: 600; }
+    .grid.wide .holiday-dot { display: none; }
+    .grid.wide .track { height: 24px; }
+    .grid.wide .track-cell { width: 70px; }
+    .grid.wide .event-bar { height: 20px; }
+    .grid.wide .event-text { font-size: 11px; }
+    .grid.wide .month-label { width: 55px; }
+    .grid.wide .grid-header-spacer { width: 55px; }
+  </style>
+</head>
+<body>
+  <script id="embedded-data" type="application/json">null</script>
+  <div id="app"></div>
+
+  <script>
+    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const MONTH_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const DOW_SHORT = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    const STORAGE_KEY = 'annual-planner-data';
+    const NUM_COLUMNS = 37;
+
+    const COLOR_OPTIONS = [
+      { name: 'Orange', value: '#f97316' }, { name: 'Amber', value: '#f59e0b' },
+      { name: 'Yellow', value: '#eab308' }, { name: 'Lime', value: '#84cc16' },
+      { name: 'Green', value: '#22c55e' }, { name: 'Emerald', value: '#10b981' },
+      { name: 'Teal', value: '#14b8a6' }, { name: 'Cyan', value: '#06b6d4' },
+      { name: 'Sky', value: '#0ea5e9' }, { name: 'Blue', value: '#3b82f6' },
+      { name: 'Indigo', value: '#6366f1' }, { name: 'Violet', value: '#8b5cf6' },
+      { name: 'Purple', value: '#a855f7' }, { name: 'Fuchsia', value: '#d946ef' },
+      { name: 'Pink', value: '#ec4899' }, { name: 'Rose', value: '#f43f5e' },
+      { name: 'Red', value: '#ef4444' }, { name: 'Stone', value: '#78716c' },
+      { name: 'Slate', value: '#64748b' },
+    ];
+
+    const DEFAULT_CATEGORIES = [
+      { id: 'travel', name: 'Travel', color: '#f97316' },
+      { id: 'content', name: 'Content', color: '#22c55e' },
+      { id: 'newsletter', name: 'Newsletter', color: '#3b82f6' },
+      { id: 'social', name: 'Social', color: '#a855f7' },
+      { id: 'personal', name: 'Personal', color: '#ec4899' },
+      { id: 'seasonal', name: 'Seasonal', color: '#eab308' },
+      { id: 'other', name: 'Other', color: '#78716c' },
+    ];
+
+    let state = {
+      year: 2026, events: [], categories: [...DEFAULT_CATEGORIES],
+      selectedCategory: 'content', showHolidays: true, printMode: 'full', zoom: 100,
+      dragging: null, editingEvent: null, showAddEvent: false, showCategoryManager: false,
+      newEvent: { title: '', startMonth: 0, startDay: 1, endMonth: 0, endDay: 1, categoryId: 'content', notes: '' },
+      newCatName: '', newCatColor: '#6366f1',
+    };
+
+    function getDaysInMonth(year, month) { return new Date(year, month + 1, 0).getDate(); }
+    function getFirstDayOfMonth(year, month) { return new Date(year, month, 1).getDay(); }
+
+    function getUSHolidays(year) {
+      return [
+        { name: "New Year's", month: 0, day: 1 }, { name: "Valentine's", month: 1, day: 14 },
+        { name: "St. Pat's", month: 2, day: 17 }, { name: "Easter", ...getEaster(year) },
+        { name: "Mother's", ...getNthDayOfMonth(year, 4, 0, 2) },
+        { name: "Memorial", ...getLastDayOfMonth(year, 4, 1) },
+        { name: "Father's", ...getNthDayOfMonth(year, 5, 0, 3) },
+        { name: "July 4th", month: 6, day: 4 },
+        { name: "Labor Day", ...getNthDayOfMonth(year, 8, 1, 1) },
+        { name: "Halloween", month: 9, day: 31 }, { name: "Veterans", month: 10, day: 11 },
+        { name: "Thanksgiving", ...getNthDayOfMonth(year, 10, 4, 4) },
+        { name: "Xmas Eve", month: 11, day: 24 }, { name: "Christmas", month: 11, day: 25 },
+        { name: "NYE", month: 11, day: 31 },
+      ];
+    }
+
+    function getEaster(year) {
+      const a = year % 19, b = Math.floor(year / 100), c = year % 100;
+      const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+      const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+      const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7;
+      const m = Math.floor((a + 11 * h + 22 * l) / 451);
+      return { month: Math.floor((h + l - 7 * m + 114) / 31) - 1, day: ((h + l - 7 * m + 114) % 31) + 1 };
+    }
+
+    function getNthDayOfMonth(year, month, dow, n) {
+      let count = 0;
+      for (let d = 1; d <= 31; d++) {
+        const dt = new Date(year, month, d);
+        if (dt.getMonth() !== month) break;
+        if (dt.getDay() === dow && ++count === n) return { month, day: d };
+      }
+      return { month, day: 1 };
+    }
+
+    function getLastDayOfMonth(year, month, dow) {
+      let last = 1;
+      for (let d = 1; d <= 31; d++) {
+        const dt = new Date(year, month, d);
+        if (dt.getMonth() !== month) break;
+        if (dt.getDay() === dow) last = d;
+      }
+      return { month, day: last };
+    }
+
+    function loadData() {
+      try { const s = document.getElementById('embedded-data'); if (s) { const d = JSON.parse(s.textContent); if (d?.events) return d; } } catch(e) {}
+      try { const s = localStorage.getItem(STORAGE_KEY); if (s) { const d = JSON.parse(s); if (d?.events) return d; } } catch(e) {}
+      return null;
+    }
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ year: state.year, events: state.events, categories: state.categories, showHolidays: state.showHolidays }));
+        updateSaveIndicator('saved');
+      } catch(e) { updateSaveIndicator('error'); }
+    }
+
+    function exportAsHTML() {
+      const data = { year: state.year, events: state.events, categories: state.categories, showHolidays: state.showHolidays };
+      let html = document.documentElement.outerHTML.replace(
+        /<script id="embedded-data" type="application\/json">[\s\S]*?<\/script>/,
+        `<script id="embedded-data" type="application/json">${JSON.stringify(data)}<\/script>`
+      );
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+      a.download = `annual-planner-${state.year}.html`;
+      a.click();
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          let data = file.name.endsWith('.json') ? JSON.parse(e.target.result) : 
+            JSON.parse(e.target.result.match(/<script id="embedded-data" type="application\/json">([\s\S]*?)<\/script>/)?.[1]);
+          if (data) {
+            Object.assign(state, { events: data.events || [], categories: data.categories || state.categories, year: data.year || state.year, showHolidays: data.showHolidays ?? true });
+            saveToLocalStorage(); render();
+          }
+        } catch(err) { alert('Invalid file'); }
+      };
+      reader.readAsText(file);
+    }
+
+    function updateSaveIndicator(status) {
+      const el = document.getElementById('save-indicator');
+      if (el) { el.className = 'save-indicator ' + status; el.textContent = status === 'saved' ? '✓ Saved' : '...'; }
+    }
+
+    let saveTimeout;
+    function scheduleSave() { updateSaveIndicator('saving'); clearTimeout(saveTimeout); saveTimeout = setTimeout(saveToLocalStorage, 500); }
+
+    function handleCellStart(month, day, e) {
+      if (e.target.closest('.event-bar')) return;
+      e.preventDefault();
+      state.dragging = { startMonth: month, startDay: day, endMonth: month, endDay: day };
+      render();
+    }
+
+    function handleCellMove(month, day, e) {
+      if (state.dragging) { e.preventDefault(); state.dragging.endMonth = month; state.dragging.endDay = day; render(); }
+    }
+
+    function handleCellEnd() {
+      if (state.dragging) {
+        let { startMonth, startDay, endMonth, endDay } = state.dragging;
+        if (endMonth * 100 + endDay < startMonth * 100 + startDay) [startMonth, endMonth, startDay, endDay] = [endMonth, startMonth, endDay, startDay];
+        state.newEvent = { title: '', startMonth, startDay, endMonth, endDay, categoryId: state.selectedCategory, notes: '' };
+        state.showAddEvent = true; state.dragging = null; render();
+        setTimeout(() => document.getElementById('new-event-title')?.focus(), 50);
+      }
+    }
+
+    function getEventVisibility(event, monthIndex, colStart, colEnd) {
+      const first = getFirstDayOfMonth(state.year, monthIndex), days = getDaysInMonth(state.year, monthIndex);
+      let startCol = event.startMonth < monthIndex ? first : event.startMonth === monthIndex ? first + event.startDay - 1 : null;
+      let endCol = event.endMonth > monthIndex ? first + days - 1 : event.endMonth === monthIndex ? first + event.endDay - 1 : null;
+      if (startCol === null || endCol === null || endCol < colStart || startCol > colEnd) return null;
+      return { startCol: Math.max(startCol, colStart), endCol: Math.min(endCol, colEnd) };
+    }
+
+    function renderMonth(monthIndex, colStart, colEnd, wide) {
+      const days = getDaysInMonth(state.year, monthIndex), first = getFirstDayOfMonth(state.year, monthIndex);
+      const holidays = state.showHolidays ? getUSHolidays(state.year).filter(h => h.month === monthIndex) : [];
+      const cellW = wide ? 70 : 26;
+
+      const visible = state.events.map(ev => { const v = getEventVisibility(ev, monthIndex, colStart, colEnd); return v ? { ...ev, ...v } : null; }).filter(Boolean);
+      const tracks = [];
+      visible.sort((a, b) => a.startCol - b.startCol).forEach(ev => {
+        let placed = false;
+        for (const t of tracks) if (!t.some(e => !(ev.endCol < e.startCol || ev.startCol > e.endCol))) { t.push(ev); placed = true; break; }
+        if (!placed) tracks.push([ev]);
+      });
+
+      let daysHtml = '';
+      for (let col = colStart; col <= colEnd; col++) {
+        const day = col - first + 1, valid = day >= 1 && day <= days, dow = col % 7, weekend = dow === 0 || dow === 6;
+        const today = valid && new Date().getFullYear() === state.year && new Date().getMonth() === monthIndex && new Date().getDate() === day;
+        const holiday = valid && holidays.find(h => h.day === day);
+        let drag = false;
+        if (state.dragging && valid) {
+          const [s, e] = [state.dragging.startMonth * 100 + state.dragging.startDay, state.dragging.endMonth * 100 + state.dragging.endDay];
+          drag = monthIndex * 100 + day >= Math.min(s, e) && monthIndex * 100 + day <= Math.max(s, e);
+        }
+        const cls = ['day-cell', !valid && 'empty', drag && 'drag-selected', today && 'today', holiday && !drag && !today && 'holiday', weekend && valid && !drag && !today && !holiday && 'weekend'].filter(Boolean).join(' ');
+        daysHtml += `<div class="${cls}" data-month="${monthIndex}" data-day="${day}" data-valid="${valid}">${valid ? (day < 10 ? '0' + day : day) : ''}${holiday && wide ? `<span class="holiday-name">${holiday.name}</span>` : ''}${holiday && !wide ? '<div class="holiday-dot"></div>' : ''}</div>`;
+      }
+
+      let tracksHtml = tracks.length ? tracks.map(track => '<div class="track">' + track.map(ev => {
+        const cat = state.categories.find(c => c.id === ev.categoryId);
+        return `<div class="event-bar ${ev.notes ? 'has-notes' : ''}" data-id="${ev.id}" style="left:${(ev.startCol - colStart) * cellW}px;width:${(ev.endCol - ev.startCol + 1) * cellW - 4}px;background:${cat?.color || '#888'}" title="${ev.title}"><span class="event-text">${ev.title}</span></div>`;
+      }).join('') + '<div class="track-cell"></div>'.repeat(colEnd - colStart + 1) + '</div>').join('') : `<div class="track">${'<div class="track-cell"></div>'.repeat(colEnd - colStart + 1)}</div>`;
+
+      return `<div class="month-row"><div class="month-label">${MONTH_NAMES[monthIndex]}</div><div class="days-container"><div class="days-row">${daysHtml}</div><div class="tracks-container">${tracksHtml}</div></div></div>`;
+    }
+
+    function renderGrid(colStart, colEnd, label = '', wide = false) {
+      const legend = state.categories.map(c => `<div class="legend-item"><div class="legend-dot" style="background:${c.color}"></div>${c.name}</div>`).join('') + (state.showHolidays && !wide ? '<div class="legend-item"><div class="legend-dot" style="background:#ef4444;border-radius:50%"></div>Holiday</div>' : '');
+      let header = ''; for (let c = colStart; c <= colEnd; c++) { const d = c % 7; header += `<div class="dow-header ${d === 0 || d === 6 ? 'weekend' : ''}">${DOW_SHORT[d]}</div>`; }
+      return `<div class="container"><div class="header"><h1 class="title">${state.year} Annual Planner ${label}</h1><div class="legend">${legend}</div></div><div class="grid ${wide ? 'wide' : ''}"><div class="grid-header"><div class="grid-header-spacer"></div>${header}</div>${Array.from({ length: 12 }, (_, i) => renderMonth(i, colStart, colEnd, wide)).join('')}</div></div>`;
+    }
+
+    function renderModal(type) {
+      const show = type === 'add' ? state.showAddEvent : type === 'edit' ? state.editingEvent : state.showCategoryManager;
+      if (!show) return '<div class="modal hidden"></div>';
+      
+      if (type === 'cat') {
+        return `<div class="modal" id="cat-modal"><div class="modal-content"><h3 class="modal-title">Manage Categories</h3><div>${state.categories.map(c => `<div class="cat-manager-item"><div class="cat-manager-item-left"><div style="width:20px;height:20px;border-radius:4px;background:${c.color}"></div><span>${c.name}</span></div><button data-del="${c.id}">×</button></div>`).join('')}</div><div class="add-cat-row"><label class="form-label">New Category</label><input class="form-input" id="cat-name" value="${state.newCatName}" placeholder="Name"><div class="color-grid">${COLOR_OPTIONS.map(c => `<div class="color-swatch ${state.newCatColor === c.value ? 'selected' : ''}" data-col="${c.value}" style="background:${c.value}"></div>`).join('')}</div><button class="save-btn" id="add-cat" style="width:100%;margin-top:12px">Add</button></div><div style="text-align:right;margin-top:16px"><button class="cancel-btn" id="close-cat">Done</button></div></div></div>`;
+      }
+      
+      const ev = type === 'add' ? state.newEvent : state.editingEvent;
+      const months = MONTH_FULL.map((m, i) => `<option value="${i}">${m}</option>`).join('');
+      const sDays = Array.from({ length: getDaysInMonth(state.year, ev.startMonth) }, (_, i) => `<option value="${i + 1}" ${ev.startDay === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('');
+      const eDays = Array.from({ length: getDaysInMonth(state.year, ev.endMonth) }, (_, i) => `<option value="${i + 1}" ${ev.endDay === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('');
+      const cats = state.categories.map(c => `<button class="cat-btn ${ev.categoryId === c.id ? 'selected' : ''}" data-${type}cat="${c.id}" style="background:${c.color}">${c.name}</button>`).join('');
+      
+      return `<div class="modal" id="${type}-modal"><div class="modal-content"><h3 class="modal-title">${type === 'add' ? 'Add' : 'Edit'} Event</h3>
+        <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="${type}-title" value="${ev.title}" placeholder="Event name"></div>
+        <div class="form-group form-row"><div><label class="form-label">Start</label><select class="form-select" id="${type}-sm">${months.replace(`"${ev.startMonth}"`, `"${ev.startMonth}" selected`)}</select></div><div><label class="form-label">Day</label><select class="form-select" id="${type}-sd">${sDays}</select></div><div><label class="form-label">End</label><select class="form-select" id="${type}-em">${months.replace(`"${ev.endMonth}"`, `"${ev.endMonth}" selected`)}</select></div><div><label class="form-label">Day</label><select class="form-select" id="${type}-ed">${eDays}</select></div></div>
+        <div class="form-group"><label class="form-label">Category</label><div class="cat-selector">${cats}</div></div>
+        <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="${type}-notes" placeholder="Optional notes">${ev.notes || ''}</textarea></div>
+        <div class="modal-actions"><div class="modal-actions-left">${type === 'edit' ? '<button class="delete-btn" id="del-ev">Delete</button><button class="duplicate-btn" id="dup-ev">Duplicate</button>' : ''}</div><div class="modal-actions-right"><button class="cancel-btn" id="cancel-${type}">Cancel</button><button class="save-btn" id="save-${type}">${type === 'add' ? 'Create' : 'Save'}</button></div></div>
+      </div></div>`;
+    }
+
+    function render() {
+      const cal = state.printMode === 'full' ? renderGrid(0, 36) :
+        state.printMode === 'split' ? `<div class="print-page">${renderGrid(0, 17, '(1/2)')}</div><div class="print-page">${renderGrid(18, 36, '(2/2)')}</div>` :
+        `<div class="print-page">${renderGrid(0, 11, '(1/3)', true)}</div><div class="print-page">${renderGrid(12, 24, '(2/3)', true)}</div><div class="print-page">${renderGrid(25, 36, '(3/3)', true)}</div>`;
+
+      document.getElementById('app').innerHTML = `
+        <div class="toolbar no-print"><div class="toolbar-inner">
+          <div style="display:flex;align-items:center;gap:8px"><button class="year-btn" id="y-">←</button><span class="year-text">${state.year}</span><button class="year-btn" id="y+">→</button></div>
+          <div class="divider"></div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="color:#a8a29e;font-size:11px">New:</span>${state.categories.slice(0, 5).map(c => `<button class="cat-btn ${state.selectedCategory === c.id ? 'selected' : ''}" data-cat="${c.id}" style="background:${c.color}">${c.name}</button>`).join('')}${state.categories.length > 5 ? `<select class="more-select" id="more"><option value="">More...</option>${state.categories.slice(5).map(c => `<option value="${c.id}">${c.name}</option>`).join('')}</select>` : ''}<button class="year-btn" id="cat-mgr" style="font-size:11px">⚙</button></div>
+          <div class="divider"></div><button class="action-btn" id="add-ev" style="background:#3b82f6">+ Add Event</button>
+          <div class="divider"></div><label class="checkbox-label"><input type="checkbox" id="hol" ${state.showHolidays ? 'checked' : ''}>Holidays</label>
+          <div class="divider"></div><button class="export-btn" id="exp">💾 Save</button><label class="action-btn" style="cursor:pointer">Import<input type="file" id="imp" accept=".json,.html"></label>
+          <div class="print-toggle">${['full', 'split', 'split3'].map(m => `<button class="print-toggle-btn ${state.printMode === m ? 'active' : ''}" data-pm="${m}">${m === 'full' ? 'Full' : m === 'split' ? '2-Page' : '3-Page'}</button>`).join('')}</div>
+          <div class="zoom-controls"><button class="zoom-btn" id="z-">−</button><span class="zoom-label">${state.zoom}%</span><button class="zoom-btn" id="z+">+</button></div>
+          <button class="print-btn" id="pr">🖨 Print</button>
+        </div><div class="hint"><span>Tap/drag to create • Tap event to edit • Save before closing</span><span class="save-indicator saved" id="save-indicator">✓ Saved</span></div></div>
+        <div class="zoom-container" style="transform:scale(${state.zoom / 100})">${cal}</div>
+        ${renderModal('add')}${renderModal('edit')}${renderModal('cat')}`;
+      bindEvents();
+    }
+
+    function bindEvents() {
+      const $ = id => document.getElementById(id), $$ = sel => document.querySelectorAll(sel);
+      $('y-')?.addEventListener('click', () => { state.year--; scheduleSave(); render(); });
+      $('y+')?.addEventListener('click', () => { state.year++; scheduleSave(); render(); });
+      $$('[data-cat]').forEach(b => b.addEventListener('click', () => { state.selectedCategory = b.dataset.cat; render(); }));
+      $('more')?.addEventListener('change', e => { if (e.target.value) { state.selectedCategory = e.target.value; render(); } });
+      $('cat-mgr')?.addEventListener('click', () => { state.showCategoryManager = true; render(); });
+      $('add-ev')?.addEventListener('click', () => { state.newEvent = { title: '', startMonth: 0, startDay: 1, endMonth: 0, endDay: 1, categoryId: state.selectedCategory, notes: '' }; state.showAddEvent = true; render(); setTimeout(() => $('add-title')?.focus(), 50); });
+      $('hol')?.addEventListener('change', () => { state.showHolidays = !state.showHolidays; scheduleSave(); render(); });
+      $('exp')?.addEventListener('click', exportAsHTML);
+      $('imp')?.addEventListener('change', e => { if (e.target.files[0]) importData(e.target.files[0]); });
+      $$('[data-pm]').forEach(b => b.addEventListener('click', () => { state.printMode = b.dataset.pm; render(); }));
+      $('z-')?.addEventListener('click', () => { state.zoom = Math.max(50, state.zoom - 25); render(); });
+      $('z+')?.addEventListener('click', () => { state.zoom = Math.min(200, state.zoom + 25); render(); });
+      $('pr')?.addEventListener('click', () => window.print());
+
+      $$('.day-cell:not(.empty)').forEach(cell => {
+        const m = +cell.dataset.month, d = +cell.dataset.day;
+        cell.addEventListener('mousedown', e => handleCellStart(m, d, e));
+        cell.addEventListener('mousemove', e => handleCellMove(m, d, e));
+        cell.addEventListener('touchstart', e => handleCellStart(m, d, e), { passive: false });
+        cell.addEventListener('touchmove', e => {
+          const t = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+          if (t?.dataset.valid === 'true') handleCellMove(+t.dataset.month, +t.dataset.day, e);
+        }, { passive: false });
+      });
+      document.addEventListener('mouseup', handleCellEnd);
+      document.addEventListener('touchend', handleCellEnd);
+
+      $$('.event-bar').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); const ev = state.events.find(x => x.id === +b.dataset.id); if (ev) { state.editingEvent = { ...ev }; render(); } }));
+
+      // Add modal
+      $('add-modal')?.addEventListener('click', e => { if (e.target.id === 'add-modal') { state.showAddEvent = false; render(); } });
+      $('cancel-add')?.addEventListener('click', () => { state.showAddEvent = false; render(); });
+      $('save-add')?.addEventListener('click', () => { if (state.newEvent.title.trim()) { state.events.push({ id: Date.now(), ...state.newEvent }); state.showAddEvent = false; scheduleSave(); render(); } });
+      $('add-title')?.addEventListener('input', e => state.newEvent.title = e.target.value);
+      $('add-sm')?.addEventListener('change', e => { state.newEvent.startMonth = +e.target.value; render(); });
+      $('add-sd')?.addEventListener('change', e => state.newEvent.startDay = +e.target.value);
+      $('add-em')?.addEventListener('change', e => { state.newEvent.endMonth = +e.target.value; render(); });
+      $('add-ed')?.addEventListener('change', e => state.newEvent.endDay = +e.target.value);
+      $('add-notes')?.addEventListener('input', e => state.newEvent.notes = e.target.value);
+      $$('[data-addcat]').forEach(b => b.addEventListener('click', () => { state.newEvent.categoryId = b.dataset.addcat; render(); }));
+
+      // Edit modal
+      $('edit-modal')?.addEventListener('click', e => { if (e.target.id === 'edit-modal') { state.editingEvent = null; render(); } });
+      $('cancel-edit')?.addEventListener('click', () => { state.editingEvent = null; render(); });
+      $('save-edit')?.addEventListener('click', () => { const i = state.events.findIndex(x => x.id === state.editingEvent.id); if (i >= 0) state.events[i] = { ...state.editingEvent }; state.editingEvent = null; scheduleSave(); render(); });
+      $('del-ev')?.addEventListener('click', () => { state.events = state.events.filter(x => x.id !== state.editingEvent.id); state.editingEvent = null; scheduleSave(); render(); });
+      $('dup-ev')?.addEventListener('click', () => { const c = { ...state.editingEvent, id: Date.now(), title: state.editingEvent.title + ' (copy)' }; state.events.push(c); state.editingEvent = c; scheduleSave(); render(); });
+      $('edit-title')?.addEventListener('input', e => state.editingEvent.title = e.target.value);
+      $('edit-sm')?.addEventListener('change', e => { state.editingEvent.startMonth = +e.target.value; render(); });
+      $('edit-sd')?.addEventListener('change', e => state.editingEvent.startDay = +e.target.value);
+      $('edit-em')?.addEventListener('change', e => { state.editingEvent.endMonth = +e.target.value; render(); });
+      $('edit-ed')?.addEventListener('change', e => state.editingEvent.endDay = +e.target.value);
+      $('edit-notes')?.addEventListener('input', e => state.editingEvent.notes = e.target.value);
+      $$('[data-editcat]').forEach(b => b.addEventListener('click', () => { state.editingEvent.categoryId = b.dataset.editcat; render(); }));
+
+      // Cat modal
+      $('cat-modal')?.addEventListener('click', e => { if (e.target.id === 'cat-modal') { state.showCategoryManager = false; render(); } });
+      $('close-cat')?.addEventListener('click', () => { state.showCategoryManager = false; render(); });
+      $('cat-name')?.addEventListener('input', e => state.newCatName = e.target.value);
+      $$('[data-col]').forEach(s => s.addEventListener('click', () => { state.newCatColor = s.dataset.col; render(); }));
+      $('add-cat')?.addEventListener('click', () => { if (state.newCatName.trim()) { state.categories.push({ id: Date.now() + '', name: state.newCatName.trim(), color: state.newCatColor }); state.newCatName = ''; scheduleSave(); render(); } });
+      $$('[data-del]').forEach(b => b.addEventListener('click', () => { if (state.categories.length > 1) { state.categories = state.categories.filter(c => c.id !== b.dataset.del); state.events = state.events.filter(e => e.categoryId !== b.dataset.del); scheduleSave(); render(); } }));
+    }
+
+    (function init() { const d = loadData(); if (d) Object.assign(state, { year: d.year || state.year, events: d.events || [], categories: d.categories || state.categories, showHolidays: d.showHolidays ?? true }); render(); })();
+  </script>
+</body>
+</html>
