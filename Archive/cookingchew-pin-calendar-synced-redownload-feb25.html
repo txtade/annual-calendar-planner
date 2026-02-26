@@ -1,1 +1,907 @@
-PLACEHOLDER_FILE_4
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CookingChew Pinterest Pinning Calendar 2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #fff; }
+    
+    @media print {
+      @page { size: landscape; margin: 0.15in; }
+      body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .no-print { display: none !important; }
+      .print-page { page-break-after: always; page-break-inside: avoid; }
+      .print-page:last-child { page-break-after: avoid; }
+      .zoom-container { transform: scale(1) !important; }
+      .container { padding: 4px; }
+      .header { margin-bottom: 4px; }
+      .title { font-size: 16px; }
+      .subtitle { font-size: 10px; margin-top: 2px; }
+      .legend { gap: 6px; margin-top: 3px; }
+      .legend-item { font-size: 8px; }
+      .legend-dot { width: 8px; height: 8px; }
+      .month-row { border-bottom: 1px solid #d6d3d1; }
+      .grid.wide .dow-header { width: 58px; font-size: 9px; padding: 3px 0; }
+      .grid.wide .day-cell { width: 58px; height: 22px; font-size: 10px; }
+      .grid.wide .holiday-name { font-size: 5px; }
+      .grid.wide .days-row { border-bottom: none; }
+      .grid.wide .tracks-container { min-height: 14px; }
+      .grid.wide .track { height: 14px; }
+      .grid.wide .track-cell { width: 58px; height: 14px; }
+      .grid.wide .event-bar { height: 11px; top: 1px; }
+      .grid.wide .event-text { font-size: 7px; }
+      .grid.wide .month-label { width: 40px; font-size: 11px; padding: 2px 4px; }
+      .grid.wide .grid-header-spacer { width: 40px; }
+    }
+
+    .toolbar {
+      position: sticky; top: 0; z-index: 50;
+      background: #292524; color: white;
+      padding: 10px 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    .toolbar-content {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .toolbar-button {
+      background: #f5f5f4;
+      color: #292524;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .toolbar-button:hover {
+      background: #e7e5e4;
+    }
+
+    .toolbar-button.active {
+      background: #78716b;
+      color: white;
+    }
+
+    .zoom-container {
+      transform-origin: top center;
+    }
+
+    .container {
+      padding: 16px;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #292524;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #78716b;
+      margin-top: 4px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding: 0 16px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #78716b;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .grid {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    .grid-header {
+      display: grid;
+      grid-template-columns: 60px repeat(7, 1fr);
+      gap: 0;
+      margin-bottom: 0;
+    }
+
+    .grid-header-spacer {
+      background: #f5f5f4;
+      border-bottom: 2px solid #d6d3d1;
+      padding: 8px 4px;
+    }
+
+    .dow-header {
+      background: #f5f5f4;
+      border-bottom: 2px solid #d6d3d1;
+      text-align: center;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #292524;
+      width: 100%;
+    }
+
+    .month-row {
+      display: grid;
+      grid-template-columns: 60px repeat(7, 1fr);
+      gap: 0;
+      border-bottom: 1px solid #d6d3d1;
+      margin-bottom: 0;
+    }
+
+    .month-label {
+      background: #f5f5f4;
+      border-right: 1px solid #d6d3d1;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #292524;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .days-row {
+      display: contents;
+    }
+
+    .day-cell {
+      border-right: 1px solid #e7e5e4;
+      border-bottom: 1px solid #e7e5e4;
+      padding: 4px;
+      min-height: 80px;
+      background: white;
+      position: relative;
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    .day-cell.other-month {
+      background: #fafaf9;
+      color: #a8a39f;
+    }
+
+    .day-number {
+      font-weight: 600;
+      color: #292524;
+      margin-bottom: 2px;
+    }
+
+    .day-cell.other-month .day-number {
+      color: #a8a39f;
+    }
+
+    .holiday-name {
+      font-size: 9px;
+      color: #d97706;
+      font-weight: 500;
+      margin-bottom: 2px;
+      line-height: 1.2;
+    }
+
+    .tracks-container {
+      min-height: 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .track {
+      height: 12px;
+      position: relative;
+      background: #fafaf9;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .track-cell {
+      position: absolute;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .event-bar {
+      position: relative;
+      height: 10px;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .event-text {
+      font-size: 8px;
+      color: white;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 2px;
+    }
+
+    .color-content-creation { background: #ec4899; }
+    .color-posting { background: #3b82f6; }
+    .color-engagement { background: #10b981; }
+    .color-analytics { background: #f59e0b; }
+    .color-tools { background: #8b5cf6; }
+    .color-admin { background: #ef4444; }
+
+    .grid.wide {
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <div class="toolbar-content">
+      <span class="toolbar-label">View:</span>
+      <button class="toolbar-button" onclick="setZoom(0.6)">60%</button>
+      <button class="toolbar-button" onclick="setZoom(0.75)">75%</button>
+      <button class="toolbar-button" onclick="setZoom(0.9)">90%</button>
+      <button class="toolbar-button active" onclick="setZoom(1)">100%</button>
+      <span style="margin-left: auto;"></span>
+      <button class="toolbar-button" onclick="window.print()">Print</button>
+    </div>
+  </div>
+
+  <div class="zoom-container" id="zoomContainer">
+    <div class="container">
+      <div class="header">
+        <h1 class="title">CookingChew Pinterest Pinning Calendar 2026</h1>
+        <p class="subtitle">Content Creation & Posting Schedule</p>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot color-content-creation"></div>
+            <span>Content Creation</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot color-posting"></div>
+            <span>Posting</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot color-engagement"></div>
+            <span>Engagement</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot color-analytics"></div>
+            <span>Analytics</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot color-tools"></div>
+            <span>Tools</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot color-admin"></div>
+            <span>Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <table class="grid wide">
+        <thead>
+          <tr class="grid-header">
+            <td class="grid-header-spacer"></td>
+            <th class="dow-header">Sun</th>
+            <th class="dow-header">Mon</th>
+            <th class="dow-header">Tue</th>
+            <th class="dow-header">Wed</th>
+            <th class="dow-header">Thu</th>
+            <th class="dow-header">Fri</th>
+            <th class="dow-header">Sat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- January 2026 -->
+          <tr class="month-row">
+            <td class="month-label">JAN</td>
+            <td class="day-cell other-month"><div class="day-number">28</div></td>
+            <td class="day-cell other-month"><div class="day-number">29</div></td>
+            <td class="day-cell other-month"><div class="day-number">30</div></td>
+            <td class="day-cell other-month"><div class="day-number">31</div></td>
+            <td class="day-cell"><div class="day-number">1</div><div class="holiday-name">New Year's Day</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">2</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">3</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">4</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">5</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="holiday-name">MLK Jr. Day</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">31</div><div class="tracks-container"></div></td>
+          </tr>
+
+          <!-- February 2026 -->
+          <tr class="month-row">
+            <td class="month-label">FEB</td>
+            <td class="day-cell"><div class="day-number">1</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">2</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">3</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">4</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">5</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="holiday-name">Valentine's</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="holiday-name">Presidents' Day</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+          </tr>
+
+          <!-- March 2026 -->
+          <tr class="month-row">
+            <td class="month-label">MAR</td>
+            <td class="day-cell"><div class="day-number">1</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">2</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">3</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">4</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">5</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="holiday-name">St. Patrick's</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">31</div><div class="tracks-container"></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+            <td class="day-cell other-month"><div class="day-number">2</div></td>
+            <td class="day-cell other-month"><div class="day-number">3</div></td>
+            <td class="day-cell other-month"><div class="day-number">4</div></td>
+          </tr>
+
+          <!-- April 2026 -->
+          <tr class="month-row">
+            <td class="month-label">APR</td>
+            <td class="day-cell"><div class="day-number">5</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="holiday-name">Easter</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="holiday-name">Earth Day</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+            <td class="day-cell other-month"><div class="day-number">2</div></td>
+          </tr>
+
+          <!-- May 2026 -->
+          <tr class="month-row">
+            <td class="month-label">MAY</td>
+            <td class="day-cell"><div class="day-number">3</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">4</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">5</div><div class="holiday-name">Cinco de Mayo</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="holiday-name">Memorial Day</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">31</div><div class="tracks-container"></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+            <td class="day-cell other-month"><div class="day-number">2</div></td>
+            <td class="day-cell other-month"><div class="day-number">3</div></td>
+            <td class="day-cell other-month"><div class="day-number">4</div></td>
+            <td class="day-cell other-month"><div class="day-number">5</div></td>
+            <td class="day-cell other-month"><div class="day-number">6</div></td>
+          </tr>
+
+          <!-- June 2026 -->
+          <tr class="month-row">
+            <td class="month-label">JUN</td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="holiday-name">Father's Day</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="holiday-name">Summer Solstice</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+            <td class="day-cell other-month"><div class="day-number">2</div></td>
+            <td class="day-cell other-month"><div class="day-number">3</div></td>
+            <td class="day-cell other-month"><div class="day-number">4</div></td>
+          </tr>
+
+          <!-- July 2026 -->
+          <tr class="month-row">
+            <td class="month-label">JUL</td>
+            <td class="day-cell"><div class="day-number">5</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="day-number">Independence Day</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">31</div><div class="tracks-container"></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+          </tr>
+
+          <!-- August 2026 -->
+          <tr class="month-row">
+            <td class="month-label">AUG</td>
+            <td class="day-cell"><div class="day-number">2</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">3</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">4</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">5</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">31</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+            <td class="day-cell other-month"><div class="day-number">2</div></td>
+            <td class="day-cell other-month"><div class="day-number">3</div></td>
+            <td class="day-cell other-month"><div class="day-number">4</div></td>
+            <td class="day-cell other-month"><div class="day-number">5</div></td>
+          </tr>
+
+          <!-- September 2026 -->
+          <tr class="month-row">
+            <td class="month-label">SEP</td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="holiday-name">Labor Day</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="holiday-name">Fall Equinox</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+            <td class="day-cell other-month"><div class="day-number">2</div></td>
+            <td class="day-cell other-month"><div class="day-number">3</div></td>
+          </tr>
+
+          <!-- October 2026 -->
+          <tr class="month-row">
+            <td class="month-label">OCT</td>
+            <td class="day-cell"><div class="day-number">4</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">5</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="holiday-name">Halloween</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">31</div><div class="tracks-container"></div></td>
+          </tr>
+
+          <!-- November 2026 -->
+          <tr class="month-row">
+            <td class="month-label">NOV</td>
+            <td class="day-cell"><div class="day-number">1</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">2</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">3</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">4</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">5</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="holiday-name">Veterans Day</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="holiday-name">Thanksgiving</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+            <td class="day-cell other-month"><div class="day-number">2</div></td>
+            <td class="day-cell other-month"><div class="day-number">3</div></td>
+            <td class="day-cell other-month"><div class="day-number">4</div></td>
+            <td class="day-cell other-month"><div class="day-number">5</div></td>
+          </tr>
+
+          <!-- December 2026 -->
+          <tr class="month-row">
+            <td class="month-label">DEC</td>
+            <td class="day-cell"><div class="day-number">6</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">7</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">8</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">9</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">10</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">11</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">12</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">13</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">14</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">5</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">15</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">16</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">17</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">18</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">19</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">20</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">21</div><div class="holiday-name">Winter Solstice</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">1</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">22</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">23</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">24</div><div class="holiday-name">Christmas Eve</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">25</div><div class="holiday-name">Christmas</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">26</div><div class="tracks-container"></div></td>
+          </tr>
+          <tr class="month-row">
+            <td class="month-label"></td>
+            <td class="day-cell"><div class="day-number">27</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">28</div><div class="tracks-container"><div class="track"><div class="track-cell" style="left: 0%;"><div class="event-bar color-content-creation"><span class="event-text">2</span></div></div></div></div></td>
+            <td class="day-cell"><div class="day-number">29</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">30</div><div class="holiday-name">New Year's Eve</div><div class="tracks-container"></div></td>
+            <td class="day-cell"><div class="day-number">31</div><div class="tracks-container"></div></td>
+            <td class="day-cell other-month"><div class="day-number">1</div></td>
+            <td class="day-cell other-month"><div class="day-number">2</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function setZoom(scale) {
+      const container = document.getElementById('zoomContainer');
+      container.style.transform = `scale(${scale})`;
+      container.style.transformOrigin = 'top center';
+      
+      // Update button states
+      document.querySelectorAll('.toolbar-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
