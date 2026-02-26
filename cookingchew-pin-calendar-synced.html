@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CookingChew Pinterest Pinning Calendar 2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #fff; }
+    
+    @media print {
+      @page { size: landscape; margin: 0.15in; }
+      body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .no-print { display: none !important; }
+      .print-page { page-break-after: always; page-break-inside: avoid; }
+      .print-page:last-child { page-break-after: avoid; }
+      .zoom-container { transform: scale(1) !important; }
+      .container { padding: 4px; }
+      .header { margin-bottom: 4px; }
+      .title { font-size: 16px; }
+      .subtitle { font-size: 10px; margin-top: 2px; }
+      .legend { gap: 6px; margin-top: 3px; }
+      .legend-item { font-size: 8px; }
+      .legend-dot { width: 8px; height: 8px; }
+      .month-row { border-bottom: 1px solid #d6d3d1; }
+      .grid.wide .dow-header { width: 58px; font-size: 9px; padding: 3px 0; }
+      .grid.wide .day-cell { width: 58px; height: 22px; font-size: 10px; }
+      .grid.wide .holiday-name { font-size: 5px; }
+      .grid.wide .days-row { border-bottom: none; }
+      .grid.wide .tracks-container { min-height: 14px; }
+      .grid.wide .track { height: 14px; }
+      .grid.wide .track-cell { width: 58px; height: 14px; }
+      .grid.wide .event-bar { height: 11px; top: 1px; }
+      .grid.wide .event-text { font-size: 7px; }
+      .grid.wide .month-label { width: 40px; font-size: 11px; padding: 2px 4px; }
+      .grid.wide .grid-header-spacer { width: 40px; }
+    }
+
+    .toolbar {
+      position: sticky; top: 0; z-index: 50;
+      background: #292524; color: white;
+      padding: 10px 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    .toolbar-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .toolbar-info { font-size: 12px; color: #a8a29e; }
+    .divider { height: 20px; width: 1px; background: #57534e; }
+    .action-btn { padding: 4px 10px; background: #44403c; border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer; }
+    .export-btn { padding: 4px 10px; background: #22c55e; border: none; border-radius: 4px; color: white; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .print-btn { padding: 4px 10px; background: white; border: none; border-radius: 4px; color: #292524; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .hint { color: #a8a29e; font-size: 11px; margin-top: 4px; }
+
+    .container { padding: 8px; }
+    .header { text-align: center; margin-bottom: 8px; }
+    .title { font-size: 18px; font-weight: bold; color: #292524; }
+    .subtitle { font-size: 12px; color: #78716c; margin-top: 2px; }
+    .legend { display: flex; justify-content: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 3px; font-size: 10px; color: #57534e; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+    .grid { border: 1px solid #d6d3d1; border-radius: 6px; overflow: hidden; }
+    .grid-header { display: flex; background: #f5f5f4; border-bottom: 1px solid #e7e5e4; }
+    .grid-header-spacer { width: 40px; flex-shrink: 0; border-right: 1px solid #e7e5e4; }
+    .dow-header { width: 58px; flex-shrink: 0; text-align: center; font-size: 9px; font-weight: 600; color: #78716c; padding: 3px 0; border-right: 1px solid #e7e5e4; }
+    .dow-header.weekend { background: #fef3e2; color: #9a3412; }
+
+    .month-row { display: flex; border-bottom: 1px solid #d6d3d1; }
+    .month-label { width: 40px; flex-shrink: 0; padding: 4px 3px; background: #f5f5f4; font-weight: 700; font-size: 11px; color: #292524; border-right: 1px solid #e7e5e4; display: flex; align-items: center; justify-content: center; }
+    .days-container { flex: 1; position: relative; }
+    .days-row { display: flex; border-bottom: 1px solid #f5f5f4; }
+    .day-cell { width: 58px; height: 22px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; border-right: 1px solid #f5f5f4; user-select: none; cursor: pointer; position: relative; color: #44403c; }
+    .day-cell.empty { background: #fafaf9; cursor: default; }
+    .day-cell.weekend { background: #fff7ed; }
+    .day-cell.today { background: #3b82f6; color: white; font-weight: 700; }
+    .day-cell.holiday { background: #fef2f2; }
+    .day-cell.drag-selected { background: #bfdbfe !important; }
+    .holiday-dot { position: absolute; bottom: 1px; right: 1px; width: 3px; height: 3px; border-radius: 50%; background: #ef4444; }
+
+    .tracks-container { min-height: 16px; }
+    .track { display: flex; height: 14px; position: relative; }
+    .track-cell { width: 58px; height: 14px; flex-shrink: 0; border-right: 1px solid #fafaf9; }
+    .event-bar { position: absolute; height: 11px; top: 1px; border-radius: 2px; cursor: pointer; display: flex; align-items: center; padding: 0 3px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .event-bar:hover { filter: brightness(1.1); }
+    .event-bar.has-notes { border-left: 2px solid rgba(255,255,255,0.5); }
+    .event-text { font-size: 7px; color: white; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal.hidden { display: none; }
+    .modal-content { background: white; border-radius: 6px; padding: 16px; width: 380px; max-height: 90vh; overflow: auto; }
+    .modal-title { font-weight: 600; font-size: 16px; margin-bottom: 12px; }
+    .form-group { margin-bottom: 10px; }
+    .form-label { font-size: 12px; color: #57534e; display: block; margin-bottom: 3px; }
+    .form-input, .form-select, .form-textarea { width: 100%; border: 1px solid #d6d3d1; border-radius: 4px; padding: 6px 10px; font-size: 12px; }
+    .form-textarea { resize: vertical; min-height: 50px; }
+    .form-row { display: flex; gap: 6px; }
+    .form-row > * { flex: 1; }
+    .modal-actions { display: flex; justify-content: space-between; margin-top: 16px; }
+    .modal-actions-left, .modal-actions-right { display: flex; gap: 6px; }
+    .delete-btn { padding: 6px 12px; background: none; border: none; color: #dc2626; cursor: pointer; font-size: 12px; }
+    .duplicate-btn, .cancel-btn { padding: 6px 12px; background: #f5f5f4; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .save-btn { padding: 6px 12px; background: #292524; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 12px; }
+
+    input[type="file"] { display: none; }
+    .save-indicator { font-size: 10px; color: #a8a29e; }
+    .save-indicator.saved { color: #22c55e; }
+
+    .zoom-container { transform-origin: top left; }
+  </style>
+</head>
+<body>
+  <script id="embedded-data" type="application/json">null</script>
+  <div id="app"></div>
+
+  <script>
+    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const MONTH_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const DOW_SHORT = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    const STORAGE_KEY = 'cookingchew-calendar-data';
+
+    const COLOR_OPTIONS = [
+      { name: 'Pink', value: '#ec4899' },
+      { name: 'Red', value: '#ef4444' },
+      { name: 'Orange', value: '#f97316' },
+      { name: 'Amber', value: '#f59e0b' },
+      { name: 'Yellow', value: '#eab308' },
+      { name: 'Green', value: '#22c55e' },
+      { name: 'Blue', value: '#3b82f6' },
+      { name: 'Purple', value: '#a855f7' },
+      { name: 'Stone', value: '#78716c' },
+    ];
+
+    const DEFAULT_CATEGORIES = [
+      { id: 'recipe', name: 'Recipe Pin', color: '#ec4899' },
+      { id: 'food', name: 'Food Photo', color: '#f97316' },
+      { id: 'idea', name: 'Idea Pin', color: '#3b82f6' },
+      { id: 'promo', name: 'Promo', color: '#22c55e' },
+      { id: 'seasonal', name: 'Seasonal', color: '#f59e0b' },
+    ];
+
+    let state = {
+      year: 2026,
+      events: [],
+      categories: [...DEFAULT_CATEGORIES],
+      selectedCategory: 'recipe',
+      showHolidays: false,
+      zoom: 100,
+      dragging: null,
+      editingEvent: null,
+      showAddEvent: false,
+      newEvent: { title: '', startMonth: 0, startDay: 1, endMonth: 0, endDay: 1, categoryId: 'recipe', notes: '' },
+    };
+
+    function getDaysInMonth(year, month) { return new Date(year, month + 1, 0).getDate(); }
+    function getFirstDayOfMonth(year, month) { return new Date(year, month, 1).getDay(); }
+
+    function loadData() {
+      try {
+        const s = document.getElementById('embedded-data');
+        if (s) {
+          const d = JSON.parse(s.textContent);
+          if (d?.events) return d;
+        }
+      } catch(e) {}
+      try {
+        const s = localStorage.getItem(STORAGE_KEY);
+        if (s) {
+          const d = JSON.parse(s);
+          if (d?.events) return d;
+        }
+      } catch(e) {}
+      return null;
+    }
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          year: state.year,
+          events: state.events,
+          categories: state.categories,
+        }));
+        updateSaveIndicator('saved');
+      } catch(e) {
+        updateSaveIndicator('error');
+      }
+    }
+
+    function exportAsHTML() {
+      const data = {
+        year: state.year,
+        events: state.events,
+        categories: state.categories,
+      };
+      let html = document.documentElement.outerHTML.replace(
+        /<script id="embedded-data" type="application\/json">[\s\S]*?<\/script>/,
+        `<script id="embedded-data" type="application/json">${JSON.stringify(data)}<\/script>`
+      );
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+      a.download = `cookingchew-pins-${state.year}.html`;
+      a.click();
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          let data = file.name.endsWith('.json') ? JSON.parse(e.target.result) :
+            JSON.parse(e.target.result.match(/<script id="embedded-data" type="application\/json">([\s\S]*?)<\/script>/)?.[1]);
+          if (data) {
+            Object.assign(state, {
+              events: data.events || [],
+              categories: data.categories || state.categories,
+              year: data.year || state.year,
+            });
+            saveToLocalStorage();
+            render();
+          }
+        } catch(err) {
+          alert('Invalid file');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function updateSaveIndicator(status) {
+      const el = document.getElementById('save-indicator');
+      if (el) {
+        el.className = 'save-indicator ' + status;
+        el.textContent = status === 'saved' ? '✓ Saved' : '...';
+      }
+    }
+
+    let saveTimeout;
+    function scheduleSave() {
+      updateSaveIndicator('saving');
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(saveToLocalStorage, 500);
+    }
+
+    function handleCellStart(month, day, e) {
+      if (e.target.closest('.event-bar')) return;
+      e.preventDefault();
+      state.dragging = { startMonth: month, startDay: day, endMonth: month, endDay: day };
+      render();
+    }
+
+    function handleCellMove(month, day, e) {
+      if (state.dragging) {
+        e.preventDefault();
+        state.dragging.endMonth = month;
+        state.dragging.endDay = day;
+        render();
+      }
+    }
+
+    function handleCellEnd() {
+      if (state.dragging) {
+        let { startMonth, startDay, endMonth, endDay } = state.dragging;
+        if (endMonth * 100 + endDay < startMonth * 100 + startDay) {
+          [startMonth, endMonth, startDay, endDay] = [endMonth, startMonth, endDay, startDay];
+        }
+        state.newEvent = {
+          title: '',
+          startMonth,
+          startDay,
+          endMonth,
+          endDay,
+          categoryId: state.selectedCategory,
+          notes: '',
+        };
+        state.showAddEvent = true;
+        state.dragging = null;
+        render();
+        setTimeout(() => document.getElementById('add-title')?.focus(), 50);
+      }
+    }
+
+    function getEventVisibility(event, monthIndex, colStart, colEnd) {
+      const first = getFirstDayOfMonth(state.year, monthIndex);
+      const days = getDaysInMonth(state.year, monthIndex);
+      let startCol =
+        event.startMonth < monthIndex
+          ? first
+          : event.startMonth === monthIndex
+          ? first + event.startDay - 1
+          : null;
+      let endCol =
+        event.endMonth > monthIndex
+          ? first + days - 1
+          : event.endMonth === monthIndex
+          ? first + event.endDay - 1
+          : null;
+      if (startCol === null || endCol === null || endCol < colStart || startCol > colEnd) return null;
+      return { startCol: Math.max(startCol, colStart), endCol: Math.min(endCol, colEnd) };
+    }
+
+    function renderMonth(monthIndex, colStart, colEnd) {
+      const days = getDaysInMonth(state.year, monthIndex);
+      const first = getFirstDayOfMonth(state.year, monthIndex);
+
+      const visible = state.events
+        .map((ev) => {
+          const v = getEventVisibility(ev, monthIndex, colStart, colEnd);
+          return v ? { ...ev, ...v } : null;
+        })
+        .filter(Boolean);
+
+      const tracks = [];
+      visible.sort((a, b) => a.startCol - b.startCol).forEach((ev) => {
+        let placed = false;
+        for (const t of tracks) {
+          if (!t.some((e) => !(ev.endCol < e.startCol || ev.startCol > e.endCol))) {
+            t.push(ev);
+            placed = true;
+            break;
+          }
+        }
+        if (!placed) tracks.push([ev]);
+      });
+
+      let daysHtml = '';
+      for (let col = colStart; col <= colEnd; col++) {
+        const day = col - first + 1;
+        const valid = day >= 1 && day <= days;
+        const dow = col % 7;
+        const weekend = dow === 0 || dow === 6;
+        const today =
+          valid &&
+          new Date().getFullYear() === state.year &&
+          new Date().getMonth() === monthIndex &&
+          new Date().getDate() === day;
+        let drag = false;
+        if (state.dragging && valid) {
+          const [s, e] = [
+            state.dragging.startMonth * 100 + state.dragging.startDay,
+            state.dragging.endMonth * 100 + state.dragging.endDay,
+          ];
+          drag =
+            monthIndex * 100 + day >= Math.min(s, e) &&
+            monthIndex * 100 + day <= Math.max(s, e);
+        }
+        const cls = [
+          'day-cell',
+          !valid && 'empty',
+          drag && 'drag-selected',
+          today && 'today',
+          weekend && valid && !drag && !today && 'holiday',
+        ]
+          .filter(Boolean)
+          .join(' ');
+        daysHtml += `<div class="${cls}" data-month="${monthIndex}" data-day="${day}" data-valid="${valid}">${
+          valid ? (day < 10 ? '0' + day : day) : ''
+        }</div>`;
+      }
+
+      let tracksHtml =
+        tracks.length > 0
+          ? tracks
+              .map(
+                (track) =>
+                  '<div class="track">' +
+                  track
+                    .map((ev) => {
+                      const cat = state.categories.find((c) => c.id === ev.categoryId);
+                      return `<div class="event-bar ${ev.notes ? 'has-notes' : ''}" data-id="${ev.id}" style="left:${
+                        (ev.startCol - colStart) * 58
+                      }px;width:${(ev.endCol - ev.startCol + 1) * 58 - 2}px;background:${
+                        cat?.color || '#888'
+                      }" title="${ev.title}"><span class="event-text">${ev.title}</span></div>`;
+                    })
+                    .join('') +
+                  '<div class="track-cell"></div>'.repeat(colEnd - colStart + 1) +
+                  '</div>'
+              )
+              .join('')
+          : `<div class="track">${'<div class="track-cell"></div>'.repeat(colEnd - colStart + 1)}</div>`;
+
+      return `<div class="month-row"><div class="month-label">${MONTH_NAMES[monthIndex]}</div><div class="days-container"><div class="days-row">${daysHtml}</div><div class="tracks-container">${tracksHtml}</div></div></div>`;
+    }
+
+    function renderGrid() {
+      const legend = state.categories
+        .map((c) => `<div class="legend-item"><div class="legend-dot" style="background:${c.color}"></div>${c.name}</div>`)
+        .join('');
+      let header = '';
+      for (let c = 0; c <= 36; c++) {
+        const d = c % 7;
+        header += `<div class="dow-header ${d === 0 || d === 6 ? 'weekend' : ''}">${DOW_SHORT[d]}</div>`;
+      }
+      const months = Array.from({ length: 12 }, (_, i) => renderMonth(i, 0, 36)).join('');
+      return `<div class="container"><div class="header"><h1 class="title">CookingChew Pinterest</h1><h2 class="subtitle">${state.year} Pinning Schedule</h2><div class="legend">${legend}</div></div><div class="grid wide"><div class="grid-header"><div class="grid-header-spacer"></div>${header}</div>${months}</div></div>`;
+    }
+
+    function renderModal() {
+      if (!state.showAddEvent && !state.editingEvent) {
+        return '<div class="modal hidden"></div>';
+      }
+
+      const ev = state.editingEvent || state.newEvent;
+      const isEdit = !!state.editingEvent;
+      const months = MONTH_FULL.map((m, i) => `<option value="${i}" ${ev.startMonth === i ? 'selected' : ''}>${m}</option>`).join('');
+      const sDays = Array.from({ length: getDaysInMonth(state.year, ev.startMonth) }, (_, i) => `<option value="${i + 1}" ${ev.startDay === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('');
+      const eDays = Array.from({ length: getDaysInMonth(state.year, ev.endMonth) }, (_, i) => `<option value="${i + 1}" ${ev.endDay === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('');
+
+      return `<div class="modal" id="event-modal"><div class="modal-content">
+        <h3 class="modal-title">${isEdit ? 'Edit' : 'Add'} Pin Schedule</h3>
+        <div class="form-group"><label class="form-label">Pin Title</label><input class="form-input" id="event-title" value="${ev.title}" placeholder="e.g., Recipe Pin"></div>
+        <div class="form-group form-row">
+          <div><label class="form-label">Start</label><select class="form-select" id="event-start-month">${months}</select></div>
+          <div><label class="form-label">Day</label><select class="form-select" id="event-start-day">${sDays}</select></div>
+          <div><label class="form-label">End</label><select class="form-select" id="event-end-month">${months}</select></div>
+          <div><label class="form-label">Day</label><select class="form-select" id="event-end-day">${eDays}</select></div>
+        </div>
+        <div class="form-group"><label class="form-label">Type</label><div style="display:flex;flex-wrap:wrap;gap:6px;">${state.categories
+          .map(
+            (c) =>
+              `<button class="action-btn" data-cat="${c.id}" style="background:${c.color};${ev.categoryId === c.id ? 'outline:2px solid #292524;outline-offset:2px;' : ''}">${c.name}</button>`
+          )
+          .join('')}</div></div>
+        <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="event-notes" placeholder="Optional notes">${ev.notes || ''}</textarea></div>
+        <div class="modal-actions"><div class="modal-actions-left">${isEdit ? '<button class="delete-btn" id="delete-event">Delete</button>' : ''}</div><div class="modal-actions-right"><button class="cancel-btn" id="cancel-event">Cancel</button><button class="save-btn" id="save-event">${isEdit ? 'Save' : 'Create'}</button></div></div>
+      </div></div>`;
+    }
+
+    function render() {
+      const grid = renderGrid();
+      const modal = renderModal();
+
+      document.getElementById('app').innerHTML = `
+        <div class="toolbar no-print">
+          <div class="toolbar-inner">
+            <span class="toolbar-info">CookingChew Pinterest Pinning Calendar - ${state.year}</span>
+            <div class="divider"></div>
+            <button class="action-btn" id="add-event">+ Add Pin Schedule</button>
+            <div class="divider"></div>
+            <button class="export-btn" id="export">💾 Save</button>
+            <label class="action-btn" style="cursor:pointer">Import<input type="file" id="import" accept=".json,.html"></label>
+            <div class="divider"></div>
+            <button class="print-btn" id="print">🖨 Print</button>
+            <span class="save-indicator saved" id="save-indicator">✓ Saved</span>
+          </div>
+          <div class="hint">Tap/drag to create pin schedule • Click pin to edit</div>
+        </div>
+        <div class="zoom-container" style="transform:scale(${state.zoom / 100})">${grid}</div>
+        ${modal}
+      `;
+
+      bindEvents();
+    }
+
+    function bindEvents() {
+      const $ = (id) => document.getElementById(id);
+      const $$ = (sel) => document.querySelectorAll(sel);
+
+      // Day cell events
+      $$('.day-cell:not(.empty)').forEach((cell) => {
+        const m = +cell.dataset.month;
+        const d = +cell.dataset.day;
+        cell.addEventListener('mousedown', (e) => handleCellStart(m, d, e));
+        cell.addEventListener('mousemove', (e) => handleCellMove(m, d, e));
+        cell.addEventListener('touchstart', (e) => handleCellStart(m, d, e), { passive: false });
+        cell.addEventListener('touchmove', (e) => {
+          const t = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+          if (t?.dataset.valid === 'true') handleCellMove(+t.dataset.month, +t.dataset.day, e);
+        }, { passive: false });
+      });
+
+      document.addEventListener('mouseup', handleCellEnd);
+      document.addEventListener('touchend', handleCellEnd);
+
+      // Event bar clicks
+      $$('.event-bar').forEach((b) => {
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const ev = state.events.find((x) => x.id === +b.dataset.id);
+          if (ev) {
+            state.editingEvent = { ...ev };
+            render();
+          }
+        });
+      });
+
+      // Modal events
+      $('event-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'event-modal') {
+          state.showAddEvent = false;
+          state.editingEvent = null;
+          render();
+        }
+      });
+
+      $('cancel-event')?.addEventListener('click', () => {
+        state.showAddEvent = false;
+        state.editingEvent = null;
+        render();
+      });
+
+      $('save-event')?.addEventListener('click', () => {
+        const ev = state.editingEvent || state.newEvent;
+        if (!ev.title.trim()) return;
+
+        if (state.editingEvent) {
+          const idx = state.events.findIndex((x) => x.id === ev.id);
+          if (idx >= 0) state.events[idx] = ev;
+        } else {
+          state.events.push({ id: Date.now(), ...ev });
+        }
+
+        state.showAddEvent = false;
+        state.editingEvent = null;
+        scheduleSave();
+        render();
+      });
+
+      $('delete-event')?.addEventListener('click', () => {
+        state.events = state.events.filter((x) => x.id !== state.editingEvent.id);
+        state.editingEvent = null;
+        scheduleSave();
+        render();
+      });
+
+      $('add-event')?.addEventListener('click', () => {
+        state.newEvent = {
+          title: '',
+          startMonth: 0,
+          startDay: 1,
+          endMonth: 0,
+          endDay: 1,
+          categoryId: state.selectedCategory,
+          notes: '',
+        };
+        state.showAddEvent = true;
+        render();
+        setTimeout(() => $('event-title')?.focus(), 50);
+      });
+
+      $('event-title')?.addEventListener('input', (e) => {
+        const ev = state.editingEvent || state.newEvent;
+        ev.title = e.target.value;
+      });
+
+      $('event-start-month')?.addEventListener('change', (e) => {
+        const ev = state.editingEvent || state.newEvent;
+        ev.startMonth = +e.target.value;
+        render();
+      });
+
+      $('event-start-day')?.addEventListener('change', (e) => {
+        const ev = state.editingEvent || state.newEvent;
+        ev.startDay = +e.target.value;
+      });
+
+      $('event-end-month')?.addEventListener('change', (e) => {
+        const ev = state.editingEvent || state.newEvent;
+        ev.endMonth = +e.target.value;
+        render();
+      });
+
+      $('event-end-day')?.addEventListener('change', (e) => {
+        const ev = state.editingEvent || state.newEvent;
+        ev.endDay = +e.target.value;
+      });
+
+      $('event-notes')?.addEventListener('input', (e) => {
+        const ev = state.editingEvent || state.newEvent;
+        ev.notes = e.target.value;
+      });
+
+      $$('[data-cat]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const ev = state.editingEvent || state.newEvent;
+          ev.categoryId = btn.dataset.cat;
+          state.selectedCategory = btn.dataset.cat;
+          render();
+        });
+      });
+
+      $('export')?.addEventListener('click', exportAsHTML);
+      $('import')?.addEventListener('change', (e) => {
+        if (e.target.files[0]) importData(e.target.files[0]);
+      });
+      $('print')?.addEventListener('click', () => window.print());
+    }
+
+    // Initialize
+    (function init() {
+      const d = loadData();
+      if (d) {
+        Object.assign(state, {
+          year: d.year || state.year,
+          events: d.events || [],
+          categories: d.categories || state.categories,
+        });
+      }
+      render();
+    })();
+  </script>
+</body>
+</html>
